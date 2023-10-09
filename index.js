@@ -34,7 +34,7 @@ const jumpscareRoute = require("./routes/jumpscare");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 
-const port = 5000 || process.env.PORT;
+const port = 8080 || process.env.PORT;
 require("dotenv").config();
 
 mongoose.connect(
