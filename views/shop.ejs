@@ -1,0 +1,239 @@
+<%- include('headerin'); -%>
+<style>
+  /* Style for the modal container */
+.body{
+  background-color: #151515;
+}
+
+/* Style for the modal content */
+#victimInputModal{
+  display: none;
+}
+.modal {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+
+  padding: 1.6rem 3rem;
+  border: 3px solid black;
+  border-radius: 5px;
+  background: white;
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.2);
+}
+.btn {
+  color:inherit;
+    font-family:inherit;
+  font-size: inherit;
+  background: white;
+  padding: 0.3rem 3.4rem;
+  border: 3px solid black;
+ 
+  box-shadow: 0 0 0 black;
+  transition: all 0.2s;
+}
+
+.btn:last-child {
+  margin: 0;
+}
+
+.btn:hover {
+  box-shadow: 0.4rem 0.4rem 0 black;
+  transform: translate(-0.4rem, -0.4rem);
+}
+
+.btn:active {
+  box-shadow: 0 0 0 black;
+  transform: translate(0, 0);
+}
+
+#powerupType{
+  border: none;
+  margin-left: 10px;
+  margin-top: 10px;
+  
+  text-transform: uppercase;
+  outline: none;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.victimname{
+  margin-top: 10px;
+  border: solid 1px black;
+  padding: 0.5rem;
+  min-width: 20px;
+  right: 50%;
+}
+
+</style>
+<div class="shop">
+  <h1 class="heading">Shop</h1>
+  <div class="top">
+    <div class="switcher">
+
+      <div class="swactive" id="two">
+        <p>Powerups</p>
+      </div>
+    </div>
+    <div class="bal">
+      <p><%= locals.team.bp %><font style="color: #78bd47">DF</font></p>
+    </div>
+  </div>
+  <div class="deduct">
+    <p>
+      <span id="deduct" class="oneform" style="display: none; background: none"
+        >0
+      </span>
+      <% if (locals.team.halfPrice===true) { %>
+      <span
+        class="oneform"
+        style="display: none; background: none; color: white"
+        >x 1/2</span
+      >
+      <% } %>
+    </p>
+  </div>
+
+<center>
+  <form action="/powerup" method="post" class="oneform" >
+
+      <div class="shopitem">
+      
+        <div class="side">
+          
+          <div class="iteminfo">
+            
+            <div class="botum">
+              <center>
+            <div class="relative w-screen h-screen" >
+              <div class="liquid-crystal w-full h-full bg-black" style="width: 300px; height: 300px; background-color: #151515;"></div>
+           
+          </div>
+        </center>
+        <button class="buytr">Buy</button>
+              <input class="quantity naming" name="naming" id="naming" style="visibility: hidden;"/>
+              <div class="number-input">
+                <button
+                  type="button"
+                  onclick="this.parentNode.querySelector('input[type=number').stepDown();"
+                  style="border-right: 0.1px solid #555555"
+                  class="minuscrys1"
+                ></button>
+                <input
+                  class="quantity crys1"
+                  min="0"
+                  name="crys1"
+                  value="0"
+                  type="number"
+                  max="1"
+                  readonly
+                />
+                <button
+                  type="button"
+                  onclick="this.parentNode.querySelector('input[type=number').stepUp()"
+                  class="plus crys1"
+                  style="border-left: 0.1px solid #555555"
+                ></button>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+
+   
+    
+
+  </form>
+
+  </center>
+  <center>
+    <div id="victimInputModal" class="modal">
+      <!-- Modal content -->
+ 
+        <form action="/attack" method="POST" class="attack">
+        
+          <div class="animate">
+            <div>
+              <input type="text" name="victimname" value="" class="victimname" placeholder="Victim Name" autocomplete="off"/>
+              <input type="submit" value="↵" class="btn"/>
+              <br>
+              <br>
+              <input id="powerupType" name="powerupType" class="powerupType" readonly/>
+          
+              
+    
+              
+            </div>
+          </div>
+          
+        </form>
+  
+    </div>
+  </center>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  
+
+  <script type="module" src="https://cdn.jsdelivr.net/gh/DevangPant1/test1@main/script%20(1).js"></script>
+
+  <script>
+    var teamName = '<%= locals.team.name %>';
+    var powreupigot = '<%= locals.team.tempPowerup %>'
+
+    <%if (locals.error){ %>
+      <% if (locals.error=='buywrong'){ %>
+    window.onload = function () {
+      alert("You Don't have enough DF!");
+    };<% } else if  (locals.error == 'buyless') { %>
+         window.onload = function () {
+          alert("Please select atleast one item.");
+        };
+        
+    <% } 
+    else if  (locals.error == 'powerupcooldown') { %>
+         window.onload = function () {
+          alert("Cooldown is still active!");
+        };
+        
+    <% } 
+    else if  (locals.error == 'success') { %>
+      localStorage.setItem(teamName,"");
+        
+    <% } 
+    else if  (locals.error == 'entervictim' && locals.team.powerupTimer === 0 && locals.team.bp >= 1000) { %>
+    
+        const powerupType = document.getElementById('powerupType');
+     
+    
+
+        powerupType.value = powreupigot;
+        var modal = document.getElementById('victimInputModal');
+      modal.style.display = 'block';
+
+      
+        
+    <% } 
+    else { %>
+        window.onload = function () {
+          alert("Only one powerup can be active at a time!");
+        };
+    <% }} %>
+         function multiUpdate() {
+          document.querySelector(".deduct .oneform").innerText =document.querySelector(".crys1").value * 1000 + document.querySelector(".crys2").value * 1000 + document.querySelector(".crys3").value * 1000
+          }
+          document.querySelector(".minuscrys1").addEventListener("click", () => {
+            multiUpdate();
+          });
+          document.querySelector(".plus.crys1").addEventListener("click", () => {
+            multiUpdate();
+          });
+             
+                                        
+
+  </script>
+  <%- include('footer'); -%>
+</div>

@@ -1,0 +1,106 @@
+<%- include('headerin'); -%>
+<div id="questionz">
+  
+
+  <% if (0 > new Date("Oct 11, 2022 00:00:00")) { %> //change to > sign
+  <div id="thank">
+    <h1 style="text-align: center; color: white">Thanks for playing!</h1>
+    <br />
+  </div>
+  <% } 
+
+  else { %>
+    <h1 class="heading">Questions</h1>
+  <div class="questions">
+    <% let unansweredQuestionFound = false; %>
+    <% locals.questions.forEach(function (element, index) { %>
+    <% if (locals.team.questions.includes(element.title)) { %>
+      <div style="background:#578b32;cursor:default" class="question ques<%- index %> ">
+        <div class="qcontent">
+          <p><%- element.title %></p>
+          <p><%- element.points %></p>
+        </div>
+      </div>
+    <% } else if(!unansweredQuestionFound){ %>
+      <div onclick="openModal('<%- index %>')" class="question ques<%- index %> ">
+        <div class="qcontent">
+          <p><%- element.title %></p>
+          <p><%- element.points %></p>
+        </div>
+
+      </div>
+      <% unansweredQuestionFound = true; %>
+    <% } %>
+    <% }) %>
+  </div>
+  <% if (unansweredQuestionFound) { %>
+    <!-- Display the first unanswered question -->
+    <div id="pop<%- locals.questions.findIndex(q => !locals.team.questions.includes(q.title)) %>" class="qmodal" <% if (locals.curr === locals.questions.find(q => !locals.team.questions.includes(q.title)).title) { %> style="display: block" <% } %>>
+      <form action="/answer" method="POST">
+        <p class="close" onclick="closeModal('<%- locals.questions.findIndex(q => !locals.team.questions.includes(q.title)) %>')">&#10060;</p>
+        <div class="qinfo">
+          <p>
+            <input type="hidden" value="<%- locals.questions.find(q => !locals.team.questions.includes(q.title)).title %>" name="title" class="defender" readonly />
+          </p>
+          <p class="qhead"><%- locals.questions.find(q => !locals.team.questions.includes(q.title)).title %></p>
+          <p class="qtext" style="margin-bottom: 144px"><%- locals.questions.find(q => !locals.team.questions.includes(q.title)).question %></p>
+          <% if (locals.questions.find(q => !locals.team.questions.includes(q.title)).attachment !== "") { %>
+            <center>
+              <%  attachmentLink = locals.questions.find(q => !locals.team.questions.includes(q.title)).attachment; %> 
+            <% if(attachmentLink.includes("png")){ %>
+              <img style="height: 40vh; width: auto;margin-top: -15vh;" src="<%- locals.questions.find(q => !locals.team.questions.includes(q.title)).attachment %>" alt="Question Image" class="qimg" />
+          </center>
+       <%} %>
+            <a class="attacher" href="<%- locals.questions.find(q => !locals.team.questions.includes(q.title)).attachment %>" download target="_blank">
+              <%- locals.questions.find(q => !locals.team.questions.includes(q.title)).attachment %>
+            </a>
+           
+          <% } %>
+        </div>
+        <div class="sidebyside">
+          <input type="text" name="ans" <% if (locals.team.sabotage === true) {%> placeholder="You have been sabotaged" <%} %><% if (locals.curr === locals.questions.find(q => !locals.team.questions.includes(q.title)).title) { %> value="Incorrect" style="color:red;border:1px solid red" <% } %>/>
+          <button <% if (locals.team.sabotage === true) { %> disabled style="background-color:grey" <% } %> id="myButtonn">Submit</button>
+        </div> 
+      </form>
+      
+      
+    </div>
+    <% unansweredQuestionFound = false; %>
+  <% } %>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/scrollreveal"></script>
+  <script src="/js/cta.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const myButton = document.getElementById("myButtonn");
+      myButton.addEventListener("click", function () {
+        // Handle button click event
+      });
+    });
+  </script>
+  <script>
+    $(document).ready(function () {
+      $('input[name = "ans"]').click(function (e) {
+        e.preventDefault();
+        $(this).css({ color: "white", opacity: "0.8", border: "none" });
+        $(this).attr({ value: "" });
+      });
+    });
+
+    function openModal(num) {
+      $(".qmodal").each(function () {
+        $(this).css({ display: "none" });
+      });
+      var e1 = document.querySelector("." + "ques" + num),
+        e2 = document.getElementById("pop" + num);
+      cta(e1, e2, { duration: 0.2, relativeToWindow: true }, function (e2) {
+        e2.style.display = "block";
+      });
+    }
+    function closeModal(num) {
+      document.getElementById("pop" + num).style.display = "none";
+    }
+  </script>
+  <% } %>
+  <%- include('footer'); -%>
+</div>
